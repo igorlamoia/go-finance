@@ -1,21 +1,40 @@
 import React from 'react';
-import { View } from 'react-native';
 import { Title, Container, Amount, Footer, Icon, CategoryName, Date, Category } from './styles';
 
-const TransactionCard: React.FC = () => {
+interface Category {
+	name: string;
+	icon: string;
+}
+
+export interface TransactionCardProps {
+	type: 'positive' | 'negative';
+	title: string;
+	amount: string;
+	date: string;
+	category: Category;
+}
+
+interface Props {
+	data: TransactionCardProps;
+}
+
+const TransactionCard: React.FC<Props> = ({ data }) => {
 	return (
 		<Container>
-			<Title>Desenvolvimento de site</Title>
-			<Amount>R$ 12.000,00</Amount>
+			<Title>{data.title}</Title>
+			<Amount type={data.type}>
+				{data.type === 'negative' && '- '}
+				{data.amount}
+			</Amount>
 			<Footer>
 				<Category>
-					<Icon name='dollar-sign' />
-					<CategoryName>Vendas</CategoryName>
+					<Icon name={data.category.icon} />
+					<CategoryName>{data.category.name}</CategoryName>
 				</Category>
-				<Date>13/03/2020</Date>
+				<Date>{data.date}</Date>
 			</Footer>
 		</Container>
 	);
 };
 
-export default TransactionCard;
+export { TransactionCard };
