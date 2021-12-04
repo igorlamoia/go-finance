@@ -92,7 +92,7 @@ export const Dashboard: React.FC = () => {
 
 				<TransactionList
 					data={data}
-					keyExtractor={(item: DataListProps) => item.id}
+					keyExtractor={(item) => item.id}
 					renderItem={({ item }) => <TransactionCard data={item} />}
 				/>
 			</Transactions>
