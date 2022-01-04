@@ -15,4 +15,4 @@ const Button = ({ title, ...rest }: Props) => {
 	);
 };
 
-export default Button;
+export { Button };

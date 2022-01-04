@@ -4,7 +4,7 @@ import { ThemeProvider } from 'styled-components';
 
 import { useFonts, Poppins_400Regular, Poppins_500Medium, Poppins_700Bold } from '@expo-google-fonts/poppins';
 
-import theme from './src/global/styles/Theme.ts';
+import theme from './src/global/styles/Theme';
 import { Register } from './src/screens/Register';
 
 export default function App() {
