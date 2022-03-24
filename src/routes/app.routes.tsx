@@ -6,12 +6,19 @@ import { useTheme } from 'styled-components';
 import { Dashboard } from '../screens/Dashboard';
 import { Register } from '../screens/Register';
 
+export type GoFinanceRoutesList = {
+	Listagem: undefined;
+	Cadastrar: undefined;
+	Resumo: undefined;
+};
+
 const { Navigator, Screen } = createBottomTabNavigator();
 
 export const AppRoutes: React.FC = () => {
 	const theme = useTheme();
 	return (
 		<Navigator
+			initialRouteName={'Listagem'}
 			screenOptions={{
 				headerShown: false,
 				tabBarActiveTintColor: theme.colors.secondary,

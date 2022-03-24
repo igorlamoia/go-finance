@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { Alert, Keyboard, Modal, TouchableWithoutFeedback } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import uuid from 'react-native-uuid';
+import { useNavigation } from '@react-navigation/native';
+
 import { Button } from '../../components/Forms/Button';
 import { CategorySelectButton } from '../../components/Forms/CategorySelectButton';
 import TransactionTypeButton from '../../components/Forms/TransactionTypeButton';
-import { Container, Title, Header, Form, Fields, TransactionsTypes } from './styles';
-
 import { CategorySelect } from '../CategorySelect';
 import { InputForm } from '../../components/Forms/InputForm';
-import { useForm } from 'react-hook-form';
-import * as Yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
+
+import { Container, Title, Header, Form, Fields, TransactionsTypes } from './styles';
 
 interface FormData {
 	name: string;
@@ -24,32 +29,50 @@ const schema = Yup.object().shape({
 		.required('O valor é obrigatório'),
 });
 
+const dataKey = '@gofinance:transactions';
+
 const Register = () => {
 	const [transactionType, setTransactionType] = useState('');
 	const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 	const [category, setCategory] = useState({ key: 'category', name: 'Categoria' });
 
+	const navigation = useNavigation();
+
 	const {
 		control,
 		handleSubmit,
 		formState: { errors },
+		reset,
 	} = useForm({ resolver: yupResolver(schema) });
 
-	const handleRegister = (form: FormData) => {
+	const handleRegister = async (form: FormData) => {
 		if (!transactionType) return Alert.alert('Selecione o tipo da transação');
 
 		if (category.key === 'category') return Alert.alert('Selecione a categoria');
 
-		const data = {
+		const newTransaction = {
+			id: String(uuid.v4()),
+			type: transactionType,
 			name: form.name,
 			amount: form.amount,
-			transactionType,
 			category: category.key,
+			date: new Date(),
 		};
-		console.log(data);
+
+		const previousDataString = await AsyncStorage.getItem(dataKey);
+		const previousDataJson = previousDataString ? JSON.parse(previousDataString) : [];
+		const updatedData = [...previousDataJson, newTransaction];
+
+		await AsyncStorage.setItem(dataKey, JSON.stringify(updatedData));
+
+		reset();
+		setCategory({ key: 'category', name: 'Categoria' });
+		setTransactionType('');
+
+		navigation.navigate('Listagem');
 	};
 
-	const hanldeTransactionTypeSelect = (type: 'up' | 'down') => {
+	const hanldeTransactionTypeSelect = (type: 'positive' | 'negative') => {
 		setTransactionType(type);
 	};
 
@@ -70,37 +93,37 @@ const Register = () => {
 					<Fields>
 						<InputForm
 							control={control}
-							placeholder='Nome'
-							name='name'
+							placeholder="Nome"
+							name="name"
 							autoCapitalize={'sentences'}
 							autoCorrect={false}
 							error={errors.name && errors.name.message}
 						/>
 						<InputForm
 							control={control}
-							placeholder='Preço'
-							name='amount'
+							placeholder="Preço"
+							name="amount"
 							keyboardType={'numeric'}
 							error={errors.amount && errors.amount.message}
 						/>
 
 						<TransactionsTypes>
 							<TransactionTypeButton
-								isActive={transactionType === 'up'}
-								title='Income'
-								type='up'
-								onPress={() => hanldeTransactionTypeSelect('up')}
+								isActive={transactionType === 'positive'}
+								title="Income"
+								type="positive"
+								onPress={() => hanldeTransactionTypeSelect('positive')}
 							/>
 							<TransactionTypeButton
-								isActive={transactionType === 'down'}
-								title='Outcome'
-								type='down'
-								onPress={() => hanldeTransactionTypeSelect('down')}
+								isActive={transactionType === 'negative'}
+								title="Outcome"
+								type="negative"
+								onPress={() => hanldeTransactionTypeSelect('negative')}
 							/>
 						</TransactionsTypes>
 						<CategorySelectButton title={category.name} onPress={handleOpenSelectCategory} />
 					</Fields>
-					<Button title='Enviar' onPress={handleSubmit(handleRegister)} />
+					<Button title="Enviar" onPress={handleSubmit(handleRegister)} />
 				</Form>
 
 				<Modal visible={categoryModalOpen}>

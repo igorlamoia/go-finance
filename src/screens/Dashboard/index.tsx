@@ -1,6 +1,10 @@
-import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { HighlightCard } from '../../components/HighlightCard';
 import { TransactionCard, TransactionCardProps } from '../../components/TransactionCard';
+import { dateFormat, dateStringFormat, numberFormat } from '../../utils/formatter';
 import {
 	Container,
 	Header,
@@ -16,90 +20,128 @@ import {
 	Title,
 	TransactionList,
 	LogoutButton,
+	LoadingIndicator,
+	ContainerLoading,
 } from './styles';
 
 export interface DataListProps extends TransactionCardProps {
 	id: string;
 }
 
+const dataKey = '@gofinance:transactions';
+
 export const Dashboard: React.FC = () => {
-	const data: DataListProps[] = [
-		{
-			id: '1',
-			type: 'positive',
-			title: 'Desenvolvimento de site',
-			amount: 'R$ 12.000,00',
-			category: {
-				name: 'vendas',
-				icon: 'dollar-sign',
+	const [loading, setLoading] = useState(false);
+	const [transactionsList, setTransactionsList] = useState<DataListProps[]>([]);
+	const [account, setAccount] = useState({
+		total: 0,
+		lastTransaction: 0,
+		income: { total: 0, lastTransaction: 0 },
+		outcome: { total: 0, lastTransaction: 0 },
+	});
+
+	const getSavedTransactions = async () => {
+		// await AsyncStorage.removeItem(dataKey);
+		const data = await AsyncStorage.getItem(dataKey);
+		const transactionsSaved: DataListProps[] = data ? JSON.parse(data) : ([] as DataListProps[]);
+
+		const updatedAccount = transactionsSaved.reduce(
+			(acc, transaction) => {
+				const transactionDate = new Date(transaction.date).getTime();
+				if (acc.lastTransaction < transactionDate) acc.lastTransaction = transactionDate;
+
+				if (transaction.type === 'positive') {
+					if (acc.income.lastTransaction < transactionDate) acc.income.lastTransaction = transactionDate;
+
+					acc.income.total += Number(transaction.amount);
+					acc.total += Number(transaction.amount);
+
+					return acc;
+				}
+				if (acc.income.lastTransaction < transactionDate) acc.outcome.lastTransaction = transactionDate;
+				acc.outcome.total += Number(transaction.amount);
+				acc.total -= Number(transaction.amount);
+				return acc;
 			},
-			date: '14/04/2020',
-		},
-		{
-			id: '2',
-			type: 'negative',
-			title: 'Aluguel apartamento',
-			amount: 'R$ 1.200,00',
-			category: {
-				name: 'Casa',
-				icon: 'shopping-bag',
-			},
-			date: '10/04/2020',
-		},
-		{
-			id: '3',
-			type: 'negative',
-			title: 'Hamburgueria BenBurguer',
-			amount: 'R$ 79,90',
-			category: {
-				name: 'Alimentação',
-				icon: 'coffee',
-			},
-			date: '14/04/2020',
-		},
-	];
+			{
+				total: 0,
+				lastTransaction: 0,
+				income: { total: 0, lastTransaction: 0 },
+				outcome: { total: 0, lastTransaction: 0 },
+			}
+		);
+		setAccount(updatedAccount);
+
+		const formattedTransactions = transactionsSaved.map((transaction: DataListProps) => ({
+			...transaction,
+			date: dateFormat(new Date(transaction.date)),
+			amount: numberFormat(Number(transaction.amount)),
+		}));
+
+		setTransactionsList(formattedTransactions);
+		setLoading(true);
+	};
+
+	useFocusEffect(
+		useCallback(() => {
+			getSavedTransactions();
+		}, [])
+	);
+
 	return (
 		<Container>
-			<Header>
-				<UserWrapper>
-					<UserInfo>
-						<Photo source={{ uri: 'https://avatars.githubusercontent.com/u/62469164?v=4' }} />
-						<User>
-							<UserGreeting>Olá,</UserGreeting>
-							<UserName>Lamoia</UserName>
-						</User>
-					</UserInfo>
-					<LogoutButton onPress={() => {}}>
-						<Icon name="power" />
-					</LogoutButton>
-				</UserWrapper>
-			</Header>
+			{!loading ? (
+				<ContainerLoading>
+					<LoadingIndicator />
+				</ContainerLoading>
+			) : (
+				<>
+					<Header>
+						<UserWrapper>
+							<UserInfo>
+								<Photo source={{ uri: 'https://avatars.githubusercontent.com/u/62469164?v=4' }} />
+								<User>
+									<UserGreeting>Olá,</UserGreeting>
+									<UserName>Lamoia</UserName>
+								</User>
+							</UserInfo>
+							<LogoutButton onPress={() => {}}>
+								<Icon name="power" />
+							</LogoutButton>
+						</UserWrapper>
+					</Header>
+					<HighlightCards>
+						<HighlightCard
+							type="up"
+							title="Entradas"
+							amount={numberFormat(account.income.total)}
+							lastTransaction={'Última entrada dia ' + dateStringFormat(account.income.lastTransaction)}
+						/>
+						<HighlightCard
+							type="down"
+							title="Saídas"
+							amount={numberFormat(account.outcome.total)}
+							lastTransaction={'Última saída dia ' + dateStringFormat(account.outcome.lastTransaction)}
+						/>
+						<HighlightCard
+							type="total"
+							title="Total"
+							amount={numberFormat(account.total)}
+							lastTransaction={'Última transação dia ' + dateStringFormat(account.lastTransaction)}
+						/>
+					</HighlightCards>
 
-			<HighlightCards>
-				<HighlightCard
-					type="up"
-					title="Entradas"
-					amount="R$ 17.400,00"
-					lastTransaction="Última entrada dia 13 de abril"
-				/>
-				<HighlightCard
-					type="down"
-					title="Saídas"
-					amount="R$ 1.259,00"
-					lastTransaction="Última entrada dia 03 de abril"
-				/>
-				<HighlightCard type="total" title="Total" amount="R$ 16.141,00" lastTransaction="01 à 16 de abril" />
-			</HighlightCards>
+					<Transactions>
+						<Title>Listagem</Title>
 
-			<Transactions>
-				<Title>Listagem</Title>
-
-				<TransactionList
-					data={data}
-					keyExtractor={(item) => item.id}
-					renderItem={({ item }) => <TransactionCard data={item} />}
-				/>
-			</Transactions>
+						<TransactionList
+							data={transactionsList}
+							keyExtractor={(item) => item.id}
+							renderItem={({ item }) => <TransactionCard data={item} />}
+						/>
+					</Transactions>
+				</>
+			)}
 		</Container>
 	);
 };
