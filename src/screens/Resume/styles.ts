@@ -22,17 +22,11 @@ export const Header = styled.View`
 	padding-bottom: 19px;
 `;
 
-export const CategoryWrapper = styled.ScrollView.attrs({})``;
-
-export const CaregoryList = styled(FlatList).attrs({
+export const Content = styled.ScrollView.attrs({
 	contentContainerStyle: {
-		padding: 16,
+		paddingHorizontal: 24,
+		paddingVertical: 16,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
 })``;
-
-export const Separator = styled.View`
-	height: 10px;
-	width: 100%;
-`;

@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { DataListProps } from '../Dashboard';
-import { Container, Title, Header, CategoryWrapper, CaregoryList, Separator } from './styles';
+import { Container, Title, Header, CategoryWrapper, CaregoryList, Separator, Content } from './styles';
 import { categories } from '../../utils/categories';
 import { HistoryCard } from '../../components/HistoryCard';
 
@@ -40,19 +40,15 @@ const Resume: React.FC = () => {
 			<Header>
 				<Title>Resumo</Title>
 			</Header>
-
-			<CaregoryList
-				data={categoriesHistory}
-				keyExtractor={(item) => item.key}
-				renderItem={({ item }) => (
+			<Content>
+				{categoriesHistory.map((category) => (
 					<HistoryCard
-						key={item.key}
-						category={categories.find((category) => category.key === item.key)!}
-						amount={item.amount}
+						key={category.key}
+						category={categories.find((item) => item.key === category.key)!}
+						amount={category.amount}
 					/>
-				)}
-				ItemSeparatorComponent={() => <Separator />}
-			/>
+				))}
+			</Content>
 		</Container>
 	);
 };
