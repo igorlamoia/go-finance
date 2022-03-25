@@ -5,6 +5,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTheme } from 'styled-components';
 import { Dashboard } from '../screens/Dashboard';
 import { Register } from '../screens/Register';
+import { Resume } from '../screens/Resume';
+
+export type GoFinanceRoutesList = {
+	Listagem: undefined;
+	Cadastrar: undefined;
+	Resumo: undefined;
+};
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -12,6 +19,7 @@ export const AppRoutes: React.FC = () => {
 	const theme = useTheme();
 	return (
 		<Navigator
+			initialRouteName={'Listagem'}
 			screenOptions={{
 				headerShown: false,
 				tabBarActiveTintColor: theme.colors.secondary,
@@ -39,7 +47,7 @@ export const AppRoutes: React.FC = () => {
 			/>
 			<Screen
 				name="Resumo"
-				component={Register}
+				component={Resume}
 				options={{
 					tabBarIcon: ({ size, color }) => <MaterialIcons name="pie-chart" size={size} color={color} />,
 				}}

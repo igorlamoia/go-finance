@@ -88,3 +88,14 @@ export const TransactionList = styled(
 	showsVerticalScrollIndicator: false,
 	contentContainerStyle: { paddingBottom: getBottomSpace() },
 })``;
+
+export const LoadingIndicator = styled.ActivityIndicator.attrs(({ theme: { colors } }) => ({
+	size: 'large',
+	color: colors.primary,
+}))``;
+
+export const ContainerLoading = styled.View`
+	flex: 1;
+	justify-content: center;
+	align-items: center;
+`;
