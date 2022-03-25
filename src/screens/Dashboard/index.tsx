@@ -40,6 +40,16 @@ export const Dashboard: React.FC = () => {
 		outcome: { total: 0, lastTransaction: 0 },
 	});
 
+	const lastTransaction = account.lastTransaction
+		? 'Última transação dia ' + dateStringFormat(account.lastTransaction)
+		: 'Nenhuma transação';
+	const lastTransactionIncome = account.income.lastTransaction
+		? 'Última entrada dia ' + dateStringFormat(account.income.lastTransaction)
+		: 'Nenhuma entrada';
+	const lastTransactionOutcome = account.outcome.lastTransaction
+		? 'Última saída dia ' + dateStringFormat(account.outcome.lastTransaction)
+		: 'Nenhuma saída';
+
 	const getSavedTransactions = async () => {
 		// await AsyncStorage.removeItem(dataKey);
 		const data = await AsyncStorage.getItem(dataKey);
@@ -115,19 +125,19 @@ export const Dashboard: React.FC = () => {
 							type="up"
 							title="Entradas"
 							amount={numberFormat(account.income.total)}
-							lastTransaction={'Última entrada dia ' + dateStringFormat(account.income.lastTransaction)}
+							lastTransaction={lastTransactionIncome}
 						/>
 						<HighlightCard
 							type="down"
 							title="Saídas"
 							amount={numberFormat(account.outcome.total)}
-							lastTransaction={'Última saída dia ' + dateStringFormat(account.outcome.lastTransaction)}
+							lastTransaction={lastTransactionOutcome}
 						/>
 						<HighlightCard
 							type="total"
 							title="Total"
 							amount={numberFormat(account.total)}
-							lastTransaction={'Última transação dia ' + dateStringFormat(account.lastTransaction)}
+							lastTransaction={lastTransaction}
 						/>
 					</HighlightCards>
 
