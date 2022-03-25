@@ -10,8 +10,8 @@ export const Container = styled.View<TypeProps>`
 	background-color: ${({ theme, type }) => (type !== 'total' ? theme.colors.shape : theme.colors.secondary)};
 	width: ${RFValue(300)}px;
 	border-radius: ${RFValue(5)}px;
-	padding: 19px 23px;
-	padding-bottom: ${RFValue(42)}px;
+	padding: 15px 23px;
+	padding-bottom: ${RFValue(25)}px;
 	margin-right: ${RFValue(16)}px;
 `;
 export const Header = styled.View`
@@ -50,7 +50,7 @@ export const Amount = styled.Text<TypeProps>`
 	font-family: ${({ theme }) => theme.fonts.medium};
 
 	color: ${({ theme, type }) => (type !== 'total' ? theme.colors.text_dark : theme.colors.shape)};
-	margin-top: 38px;
+	margin-top: 5px;
 `;
 export const LastTransaction = styled.Text<TypeProps>`
 	font-size: ${RFValue(12)}px;

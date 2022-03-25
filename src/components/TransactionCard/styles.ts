@@ -18,8 +18,6 @@ export const Title = styled.Text`
 	color: ${({ theme }) => theme.colors.title};
 	font-family: ${({ theme }) => theme.fonts.regular};
 	font-size: ${RFValue(14)}px;
-
-	margin-bottom: 16px;
 `;
 
 export const Amount = styled.Text<TransactionProps>`
@@ -33,8 +31,6 @@ export const Footer = styled.View`
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
-
-	margin-top: 19px;
 `;
 export const Icon = styled(Feather)`
 	font-size: ${RFValue(14)}px;
