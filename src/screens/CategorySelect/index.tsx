@@ -15,7 +15,7 @@ interface Props {
 	closeSelectCategory: () => void;
 }
 
-const CategorySelect = ({ category, setCategory, closeSelectCategory }: Props) => {
+const CategorySelect: React.FC<Props> = ({ category, setCategory, closeSelectCategory }) => {
 	const handleCaregory = (categorySelected: CategoryProps) => {
 		setCategory(categorySelected);
 	};
@@ -38,7 +38,7 @@ const CategorySelect = ({ category, setCategory, closeSelectCategory }: Props) =
 				ItemSeparatorComponent={() => <Separator />}
 			/>
 			<Footer>
-				<Button title='Selecionar' onPress={closeSelectCategory} />
+				<Button title="Selecionar" onPress={closeSelectCategory} />
 			</Footer>
 		</Container>
 	);

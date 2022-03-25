@@ -13,6 +13,7 @@ interface ContainerProps {
 
 export const Container = styled.View<ContainerProps>`
 	width: 48%;
+	height: ${RFValue(50)}px;
 
 	border-width: ${({ isActive }) => (isActive ? 0 : 1.5)}px;
 	border-style: solid;
@@ -36,8 +37,8 @@ export const Button = styled(RectButton)`
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-
-	padding: 16px;
+	height: 100%;
+	border-radius: 5px;
 `;
 
 export const Icon = styled(Feather)<IconProps>`

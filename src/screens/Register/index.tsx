@@ -31,7 +31,7 @@ const schema = Yup.object().shape({
 
 const dataKey = '@gofinance:transactions';
 
-const Register = () => {
+const Register: React.FC = () => {
 	const [transactionType, setTransactionType] = useState('');
 	const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 	const [category, setCategory] = useState({ key: 'category', name: 'Categoria' });
