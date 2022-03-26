@@ -1,39 +1,43 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { DataListProps } from '../Dashboard';
-import { Container, Title, Header, CategoryWrapper, CaregoryList, Separator, Content } from './styles';
+import { Container, Title, Header, Content } from './styles';
 import { categories } from '../../utils/categories';
 import { HistoryCard } from '../../components/HistoryCard';
 
 const dataKey = '@gofinance:transactions';
 
-interface CaregoryData {
+interface CategoryData {
 	key: string;
 	amount: number;
 }
 
 const Resume: React.FC = () => {
-	const [categoriesHistory, setCategoriesHistory] = useState([] as CaregoryData[]);
-	useFocusEffect(() => {
-		(async () => {
-			const data = await AsyncStorage.getItem(dataKey);
-			const transactionsSaved: DataListProps[] = data ? JSON.parse(data) : ([] as DataListProps[]);
+	const [categoriesHistory, setCategoriesHistory] = useState([] as CategoryData[]);
 
-			const categoryData = transactionsSaved.reduce((acc, transaction) => {
-				const newAcc = [...acc];
-				const actualCategory = newAcc.find((category: CaregoryData) => category.key === transaction.category);
-				if (!!actualCategory) {
-					actualCategory.key = transaction.category;
-					actualCategory.amount += Number(transaction.amount);
-					return newAcc;
-				}
-				newAcc.push({ key: transaction.category, amount: Number(transaction.amount) });
-				return newAcc;
-			}, [] as CaregoryData[]);
-			setCategoriesHistory(categoryData);
-		})();
-	});
+	const getCategoryHistory = async () => {
+		const data = await AsyncStorage.getItem(dataKey);
+		const transactionsSaved: DataListProps[] = data ? JSON.parse(data) : ([] as DataListProps[]);
+
+		const categoryData = transactionsSaved.reduce((acc, transaction) => {
+			const actualCategory = acc.find((category: CategoryData) => category.key === transaction.category);
+			if (!!actualCategory) {
+				actualCategory.key = transaction.category;
+				actualCategory.amount += Number(transaction.amount);
+				return acc;
+			}
+			acc.push({ key: transaction.category, amount: Number(transaction.amount) });
+			return acc;
+		}, [] as CategoryData[]);
+		setCategoriesHistory(categoryData);
+	};
+
+	useFocusEffect(
+		useCallback(() => {
+			getCategoryHistory();
+		}, [])
+	);
 
 	return (
 		<Container>
