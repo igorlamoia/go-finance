@@ -44,6 +44,7 @@ const Resume: React.FC = () => {
 	const [historyDate, setHistoryDate] = useState(new Date());
 	const [isLoading, setIsLoading] = useState(true);
 	const theme = useTheme();
+	const tabBarHeight = useBottomTabBarHeight();
 
 	const getCategoryHistory = async () => {
 		setIsLoading(true);
@@ -113,7 +114,7 @@ const Resume: React.FC = () => {
 			{!isLoading && (
 				<Content
 					contentContainerStyle={{
-						paddingBottom: useBottomTabBarHeight(),
+						paddingBottom: tabBarHeight,
 						paddingHorizontal: 24,
 						justifyContent: 'center',
 						alignItems: 'center',
