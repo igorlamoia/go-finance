@@ -2,7 +2,7 @@ import styled from 'styled-components/native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { Feather } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
-import noTransactions from '../../global/assets/noTransactions.json';
+import noTransactions from '../../assets/noTransactions.json';
 import { BorderlessButton } from 'react-native-gesture-handler';
 
 export const Container = styled.View`
