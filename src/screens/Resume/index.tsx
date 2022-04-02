@@ -27,6 +27,7 @@ import {
 	Message,
 } from './styles';
 import { fnsFormatMonthYear } from '../../utils/formatter';
+import { useAuth } from '../../hooks/auth';
 
 const dataKey = '@gofinance:transactions';
 export interface CategoryData {
@@ -45,6 +46,9 @@ const Resume: React.FC = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const theme = useTheme();
 	const tabBarHeight = useBottomTabBarHeight();
+
+	const { user } = useAuth();
+	const dataKey = `@gofinance:transactions_user:${user.id}`;
 
 	const getCategoryHistory = async () => {
 		setIsLoading(true);

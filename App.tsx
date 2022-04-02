@@ -8,9 +8,8 @@ import { useFonts, Poppins_400Regular, Poppins_500Medium, Poppins_700Bold } from
 
 import theme from './src/global/styles/Theme';
 
-import { NavigationContainer } from '@react-navigation/native';
-
-import { AppRoutes } from './src/routes/app.routes';
+import { AuthProvider } from './src/hooks/auth';
+import { Routes } from './src/routes';
 import { StatusBar } from 'react-native';
 
 export default function App() {
@@ -23,10 +22,11 @@ export default function App() {
 	if (!fontsLoaded) return <AppLoading />;
 	return (
 		<ThemeProvider theme={theme}>
-			<NavigationContainer>
-				<StatusBar barStyle={'light-content'} backgroundColor={theme.colors.primary} />
-				<AppRoutes />
-			</NavigationContainer>
+			<StatusBar barStyle={'light-content'} backgroundColor={theme.colors.primary} />
+
+			<AuthProvider>
+				<Routes />
+			</AuthProvider>
 		</ThemeProvider>
 	);
 }

@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator } from 'react-native';
 import { HighlightCard } from '../../components/HighlightCard';
 import { TransactionCard, TransactionCardProps } from '../../components/TransactionCard';
+import { useAuth } from '../../hooks/auth';
 import { dateFormat, dateStringFormat, numberFormat } from '../../utils/formatter';
 import {
 	Container,
@@ -28,8 +28,6 @@ export interface DataListProps extends TransactionCardProps {
 	id: string;
 }
 
-const dataKey = '@gofinance:transactions';
-
 export const Dashboard: React.FC = () => {
 	const [loading, setLoading] = useState(false);
 	const [transactionsList, setTransactionsList] = useState<DataListProps[]>([]);
@@ -39,6 +37,9 @@ export const Dashboard: React.FC = () => {
 		income: { total: 0, lastTransaction: 0 },
 		outcome: { total: 0, lastTransaction: 0 },
 	});
+
+	const { user, logOut } = useAuth();
+	const dataKey = `@gofinance:transactions_user:${user.id}`;
 
 	const lastTransaction = account.lastTransaction
 		? 'Última transação dia ' + dateStringFormat(account.lastTransaction)
@@ -109,13 +110,13 @@ export const Dashboard: React.FC = () => {
 					<Header>
 						<UserWrapper>
 							<UserInfo>
-								<Photo source={{ uri: 'https://avatars.githubusercontent.com/u/62469164?v=4' }} />
+								<Photo source={{ uri: user.photo }} />
 								<User>
 									<UserGreeting>Olá,</UserGreeting>
-									<UserName>Lamoia</UserName>
+									<UserName>{user.name}</UserName>
 								</User>
 							</UserInfo>
-							<LogoutButton onPress={() => {}}>
+							<LogoutButton onPress={logOut}>
 								<Icon name="power" />
 							</LogoutButton>
 						</UserWrapper>
