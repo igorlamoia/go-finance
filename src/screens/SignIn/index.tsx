@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import LogoSvg from '../../assets/svg/logo.svg';
 import AppleSvg from '../../assets/svg/apple.svg';
 import GoogleSvg from '../../assets/svg/google.svg';
@@ -6,13 +6,18 @@ import GoogleSvg from '../../assets/svg/google.svg';
 import { Container, Header, Footer, Title, Description, ButtonWrapper } from './styles';
 import { SocialButton } from '../../components/SocialButton';
 import { useAuth } from '../../hooks/auth';
-import { Alert } from 'react-native';
+import { ActivityIndicator, Alert, Platform } from 'react-native';
+import { useTheme } from 'styled-components/native';
 
 const SignIn: React.FC = () => {
-	const { user, signInWithGoogle, signInWithApple } = useAuth();
+	const { signInWithGoogle, signInWithApple } = useAuth();
+	const [isLoading, setIsLoading] = useState(false);
+
+	const theme = useTheme();
 
 	const handleSignInWithGoogle = async () => {
 		try {
+			setIsLoading(true);
 			await signInWithGoogle();
 		} catch (error) {
 			console.log(error);
@@ -21,14 +26,13 @@ const SignIn: React.FC = () => {
 	};
 	const handleSignInWithApple = async () => {
 		try {
+			setIsLoading(true);
 			await signInWithApple();
 		} catch (error) {
 			console.log(error);
 			Alert.alert('Não foi possível conectar com a conta Apple');
 		}
 	};
-
-	console.log('usuário logado:', user);
 
 	return (
 		<Container>
@@ -47,8 +51,11 @@ const SignIn: React.FC = () => {
 			<Footer>
 				<ButtonWrapper>
 					<SocialButton onPress={handleSignInWithGoogle} title="Entrar com Google" svg={GoogleSvg} />
-					<SocialButton onPress={handleSignInWithApple} title="Entrar com Apple" svg={AppleSvg} />
+					{Platform.OS === 'ios' && (
+						<SocialButton onPress={handleSignInWithApple} title="Entrar com Apple" svg={AppleSvg} />
+					)}
 				</ButtonWrapper>
+				{isLoading && <ActivityIndicator color={theme.colors.primary} size="large" />}
 			</Footer>
 		</Container>
 	);

@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as AuthSession from 'expo-auth-session';
 import * as AppleAuthentication from 'expo-apple-authentication';
@@ -16,6 +16,7 @@ interface IAuthContextData {
 	user: UserAuth;
 	signInWithGoogle: () => Promise<void>;
 	signInWithApple: () => Promise<void>;
+	logOut(): Promise<void>;
 }
 
 interface AuthorizationResponse {
@@ -25,10 +26,25 @@ interface AuthorizationResponse {
 	type: string;
 }
 
+const storageUserKey = '@gofinances:user';
+
 export const AuthContext = createContext({} as IAuthContextData);
 
 export const AuthProvider: React.FC<ReactNode> = ({ children }) => {
-	const [userAuth, setUserAuth] = useState({} as UserAuth);
+	const [userAuth, setUserAuth] = useState<UserAuth>({} as UserAuth);
+	useEffect(() => {
+		(async () => {
+			const savedUser = await AsyncStorage.getItem(storageUserKey);
+			if (savedUser) {
+				setUserAuth(JSON.parse(savedUser));
+			}
+		})();
+	}, []);
+
+	const logOut = async () => {
+		setUserAuth({} as UserAuth);
+		await AsyncStorage.setItem(storageUserKey, JSON.stringify({}));
+	};
 
 	const signInWithGoogle = async () => {
 		try {
@@ -50,8 +66,7 @@ export const AuthProvider: React.FC<ReactNode> = ({ children }) => {
 					photo: userInfo.picture,
 				};
 				setUserAuth(userLogged);
-				await AsyncStorage.setItem('@gofinances:user', JSON.stringify(userLogged));
-				console.log('ao user ai', userLogged);
+				await AsyncStorage.setItem(storageUserKey, JSON.stringify(userLogged));
 			}
 		} catch (error: any) {
 			throw new Error(error);
@@ -76,7 +91,7 @@ export const AuthProvider: React.FC<ReactNode> = ({ children }) => {
 				};
 
 				setUserAuth(userLogged);
-				await AsyncStorage.setItem('@gofinances:user', JSON.stringify(userLogged));
+				await AsyncStorage.setItem(storageUserKey, JSON.stringify(userLogged));
 			}
 		} catch (error: any) {
 			throw new Error(error);
@@ -84,7 +99,7 @@ export const AuthProvider: React.FC<ReactNode> = ({ children }) => {
 	};
 
 	return (
-		<AuthContext.Provider value={{ user: userAuth, signInWithGoogle, signInWithApple }}>
+		<AuthContext.Provider value={{ user: userAuth, signInWithGoogle, signInWithApple, logOut }}>
 			{children}
 		</AuthContext.Provider>
 	);

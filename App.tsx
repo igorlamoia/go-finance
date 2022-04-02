@@ -8,12 +8,9 @@ import { useFonts, Poppins_400Regular, Poppins_500Medium, Poppins_700Bold } from
 
 import theme from './src/global/styles/Theme';
 
-import { NavigationContainer } from '@react-navigation/native';
-
-import { AppRoutes } from './src/routes/app.routes';
-import { StatusBar } from 'react-native';
-import { SignIn } from './src/screens/SignIn';
 import { AuthProvider } from './src/hooks/auth';
+import { Routes } from './src/routes';
+import { StatusBar } from 'react-native';
 
 export default function App() {
 	const [fontsLoaded] = useFonts({
@@ -25,12 +22,10 @@ export default function App() {
 	if (!fontsLoaded) return <AppLoading />;
 	return (
 		<ThemeProvider theme={theme}>
+			<StatusBar barStyle={'light-content'} backgroundColor={theme.colors.primary} />
+
 			<AuthProvider>
-				<NavigationContainer>
-					<StatusBar barStyle={'light-content'} backgroundColor={theme.colors.primary} />
-					{/* <AppRoutes /> */}
-					<SignIn />
-				</NavigationContainer>
+				<Routes />
 			</AuthProvider>
 		</ThemeProvider>
 	);

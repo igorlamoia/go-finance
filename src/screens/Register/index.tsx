@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Alert, Keyboard, Modal, TouchableWithoutFeedback } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { useAuth } from '../../hooks/auth';
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
@@ -29,14 +29,15 @@ const schema = Yup.object().shape({
 		.required('O valor é obrigatório'),
 });
 
-const dataKey = '@gofinance:transactions';
-
 const Register: React.FC = () => {
 	const [transactionType, setTransactionType] = useState('');
 	const [categoryModalOpen, setCategoryModalOpen] = useState(false);
 	const [category, setCategory] = useState({ key: 'category', name: 'Categoria' });
 
 	const navigation = useNavigation();
+
+	const { user } = useAuth();
+	const dataKey = `@gofinance:transactions_user:${user.id}`;
 
 	const {
 		control,
