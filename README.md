@@ -41,14 +41,14 @@ Desenvolvido durante o curso de React Native da RocketSeat 💜
 ![Image declaracoes](./src/assets/graph.jpg)
 
 <p align="center">
-  <a href="#Tecnologias">Início</a>
+  <a href="#Tecnologias">Tecnologias</a>
 </p>
 
 # Emular:
 
 - Instalando dependências do projeto (dentro da pasta principal: gofinance):
   - yarn
-- Instalando expo no OS (Sistema Operacional) <a href="https://docs.expo.dev/get-started/installation/">Documentação Expo</a>:
+- Instalando expo no OS (Sistema Operacional) <a href="https://docs.expo.dev/get-started/installation/"  target="_blank">Documentação Expo</a>:
 
   - yarn add --global expo-cli
 
