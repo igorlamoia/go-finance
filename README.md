@@ -6,7 +6,7 @@ Desenvolvido durante o curso de React Native da RocketSeat 💜
   <a href="#Imagens">Imagens</a>&nbsp;&nbsp; | <a href="#Emular">Emular</a>
 </p>
 
-# Tecnologias 💻:
+# Tecnologias
 
 ### React Native (Expo Bare Workflow)📱
 
